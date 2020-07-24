@@ -41,7 +41,7 @@ exports.obtenerHistorias = async (req, res) => {
         //const {categoria} = req.body;
         //console.log(req.body);
         console.log(req.params.id);
-        const historias = await Historia.find({ categoria: req.params.id },'titulo descripcion').sort({creado: -1});
+        const historias = await Historia.find({ categoria: req.params.id },'titulo descripcion historiaDetalle').sort({creado: -1});
         res.json({historias});
     } catch (error) {
         console.log(error);

@@ -1,0 +1,22 @@
+{
+  "name": "relatozserver",
+  "version": "1.0.0",
+  "description": "Servidor del website relatoz",
+  "main": "index.js",
+  "scripts": {
+    "start": "node .",
+    "dev": "nodemon ."
+  },
+  "author": "Javier Raygoza Torres",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-validator": "^6.6.0",
+    "mongoose": "^5.9.24"
+  }
+}

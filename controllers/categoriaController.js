@@ -9,22 +9,21 @@ exports.crearCategoria = async (req, res) => {
     // }
 
     try {
-        // Extraer el proyecto y comprobar si existe
-        //const {proyecto} = req.body;
+        //Extraer categoria
+        const {titulo, descripcion} = req.body;
 
-        //const existeProyecto = await Proyecto.findById(proyecto);
+        const nuevaCategoria = {};
 
-        // if(!existeProyecto){
-        //     return res.status(404).json({msg: 'Proyecto no encontrado'});
-        // }
-
-        // Revisar si el proyecto actual es del usuario que esta logeado
-        // if(existeProyecto.creador.toString() !== req.usuario.id){
-        //     return res.status(401).json({msg: 'No autorizado'});
-        // }
+        if(titulo){
+            nuevaCategoria.titulo = titulo;
+        }
+    
+        if(descripcion){
+            nuevaCategoria.descripcion = descripcion;
+        }
 
         // Creamos la tarea
-        const categoria = new Categoria(req.body);
+        const categoria = new Categoria(nuevaCategoria);
         await categoria.save();
         res.json(categoria);
         
@@ -34,10 +33,41 @@ exports.crearCategoria = async (req, res) => {
     }
 }
 
+// actualizar categoria por id
+exports.actualizarCategoria = async (req, res) => {
+    // extraer la información del proyecto
+    const {titulo, descripcion} = req.body;
+    const nuevaCategoria = {};
+
+    if(titulo){
+        nuevaCategoria.titulo = titulo;
+    }
+
+    if(descripcion){
+        nuevaCategoria.descripcion = descripcion;
+    }
+
+    try {
+        // Revisar el id a ver si existe
+        let categoria = await Categoria.findById(req.params.id);
+
+        // revisar si existe o no
+        if(!categoria){
+            return res.status(404).json({msg: 'Categoria no encontrado'});
+        }
+
+        categoria = await Categoria.findByIdAndUpdate({ _id: req.params.id},{$set: nuevaCategoria}, { new: true});
+        res.json({categoria});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Hubo un error');
+    }
+}
+
 // Obtener caegorias
 exports.obtenerCategorias = async (req, res) => {
     try {
-        const categorias = await Categoria.find({},'titulo descripcion').sort({creado: -1});
+        const categorias = await Categoria.find({},'titulo descripcion').sort({titulo: 1});
         res.json({categorias});
     } catch (error) {
         console.log(error);
@@ -45,6 +75,26 @@ exports.obtenerCategorias = async (req, res) => {
     }
 }
 
+// Elimina una categoria por su id
+exports.eliminarCategoria = async (req,res) =>{
+    try {
+        // Revisar el id
+        let categoria = await Categoria.findById(req.params.id);
+
+        // revisar si existe o no
+        if(!categoria){
+            return res.status(404).json({msg: 'Categoria no encontrado'});
+        }
+
+        // Eliminar el proyecto
+        await Categoria.findOneAndRemove({ _id: req.params.id});
+        res.json({msg: 'Categoria eliminada'});
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Hubo un error');
+    }
+}
 // exports.obtieneCategorias = (req,res) => {
 //     res.send('hola xd desde categoriacontroller');
 //     //console.log(req.body);

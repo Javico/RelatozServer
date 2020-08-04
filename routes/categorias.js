@@ -14,6 +14,20 @@ router.post('/',
     categoriaController.crearCategoria
 )
 
+// Actualizar la categoria por ID
+router.put('/:id',
+    [
+        check('titulo', 'El título es obligatorio').not().isEmpty(),
+        check('descripcion', 'La descripción es obligatoria').not().isEmpty()
+    ],
+    categoriaController.actualizarCategoria
+)
+
+// Eliminar un categoria por ID
+router.delete('/:id',
+    categoriaController.eliminarCategoria    
+)
+
 // Obtener categorias
 router.get('/',
     //auth,

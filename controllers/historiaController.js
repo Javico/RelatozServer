@@ -9,25 +9,47 @@ exports.crearHistoria = async (req, res) => {
     // }
 
     try {
-        // Extraer el proyecto y comprobar si existe
-        //const {proyecto} = req.body;
+        //Extraer info
+        const {titulo, descripcion, historiaDetalle, categoria} = req.body;
 
-        //const existeProyecto = await Proyecto.findById(proyecto);
+        const nuevaHistoria = {};
 
-        // if(!existeProyecto){
-        //     return res.status(404).json({msg: 'Proyecto no encontrado'});
-        // }
+        if(titulo){
+            nuevaHistoria.titulo = titulo;
+        }
+    
+        if(descripcion){
+            nuevaHistoria.descripcion = descripcion;
+        }
 
-        // Revisar si el proyecto actual es del usuario que esta logeado
-        // if(existeProyecto.creador.toString() !== req.usuario.id){
-        //     return res.status(401).json({msg: 'No autorizado'});
-        // }
+        if(historiaDetalle){
+            nuevaHistoria.historiaDetalle = historiaDetalle;
+        }
+
+        if(categoria){
+            nuevaHistoria.categoria = categoria;
+        }
 
         // Creamos la tarea
-        const historia = new Historia(req.body);
+        const historia = new Historia(nuevaHistoria);
         await historia.save();
         res.json(historia);
         
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Hubo un error');
+    }
+}
+
+// Obtener TODAS las historias existentes
+exports.obtenerHistoriasTodas = async (req, res) => {
+    try {
+        // Extraer el proyecto y comprobar si existe
+        //const {categoria} = req.body;
+        //console.log(req.body);
+        //console.log(req.params.id);
+        const historias = await Historia.find({},'titulo descripcion historiaDetalle categoria').sort({creado: -1});
+        res.json({historias});
     } catch (error) {
         console.log(error);
         res.status(500).send('Hubo un error');
@@ -40,7 +62,7 @@ exports.obtenerHistorias = async (req, res) => {
         // Extraer el proyecto y comprobar si existe
         //const {categoria} = req.body;
         //console.log(req.body);
-        console.log(req.params.id);
+        //console.log(req.params.id);
         const historias = await Historia.find({ categoria: req.params.id },'titulo descripcion historiaDetalle').sort({creado: -1});
         res.json({historias});
     } catch (error) {
@@ -57,6 +79,63 @@ exports.obtenerHistoriaDetalle = async (req, res) => {
         console.log(req.params.id);
         const historias = await Historia.findOne({ _id: req.params.id },'titulo historia').sort({creado: -1});
         res.json({historias});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Hubo un error');
+    }
+}
+
+// actualizar historia por id
+exports.actualizarHistoria = async (req, res) => {
+    // extraer la información del proyecto
+    const {titulo, descripcion, historiaDetalle} = req.body;
+    const nuevaHistoria = {};
+
+    if(titulo){
+        nuevaHistoria.titulo = titulo;
+    }
+
+    if(descripcion){
+        nuevaHistoria.descripcion = descripcion;
+    }
+
+    if(historiaDetalle){
+        nuevaHistoria.historiaDetalle = historiaDetalle;
+    }
+
+    try {
+        // Revisar el id a ver si existe
+        let historia = await Historia.findById(req.params.id);
+
+        // revisar si existe o no
+        if(!historia){
+            return res.status(404).json({msg: 'Historia no encontrada'});
+        }
+
+        historia = await Historia.findByIdAndUpdate({ _id: req.params.id},{$set: nuevaHistoria}, { new: true});
+        //console.log(historia)
+        res.json({historia});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Hubo un error');
+    }
+}
+
+// Elimina una historia por su id
+exports.eliminarHistoria = async (req,res) =>{
+    try {
+        // Revisar el id
+        let historia = await Historia.findById(req.params.id);
+
+        // revisar si existe o no
+        if(!historia){
+            return res.status(404).json({msg: 'Historia no encontrado'});
+        }
+
+        // Eliminar el proyecto
+        await Historia.findOneAndRemove({ _id: req.params.id});
+        res.json({msg: 'Historia eliminada'});
+
     } catch (error) {
         console.log(error);
         res.status(500).send('Hubo un error');

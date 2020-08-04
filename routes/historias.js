@@ -22,6 +22,29 @@ router.get('/:id',
     historiaController.obtenerHistorias
 )
 
+// Obtener toda las historias existentes
+router.get('/',
+    //auth,
+    historiaController.obtenerHistoriasTodas
+)
+
+
+// Actualizar la historia por ID
+router.put('/:id',
+    [
+        check('titulo', 'El título es obligatorio').not().isEmpty(),
+        check('descripcion', 'La descripción es obligatoria').not().isEmpty(),
+        check('historiaDetalle', 'El detalle es obligatoria').not().isEmpty()
+    ],
+    historiaController.actualizarHistoria
+)
+
+// Eliminar una historia por medio de su id
+router.delete('/:id',
+    //auth,
+    historiaController.eliminarHistoria
+)
+
 // // Obtener historia por ID de historia
 // router.get('/:id',
 //     //auth,

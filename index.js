@@ -24,6 +24,7 @@ const PORT = process.env.PORT || 4000;
 
 // importar rutas
 app.use('/api/usuarios', require('./routes/usuarios'));
+app.use('/api/auth',require('./routes/auth'));
 app.use('/api/categorias', require('./routes/categorias'));
 app.use('/api/historias', require('./routes/historias'));
 app.use('/api/historiadetalle', require('./routes/historia'));

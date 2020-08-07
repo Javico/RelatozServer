@@ -3,8 +3,7 @@ const bcryptjs = require('bcryptjs');
 const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 
-exports.crearUsuario = async (req, res) => {
-
+exports.autenticarUsuario = async (req, res) => {
     // revisar si hay errores
     const errores = validationResult(req);
 
@@ -13,25 +12,25 @@ exports.crearUsuario = async (req, res) => {
     }
 
     // extraer email y password
-    const {email, password} = req.body;
+    const { email, password } = req.body;
 
     try {
-        // revisar que el usuario resgistrado sea unico
+        // revisar que sea un usuario registrado
         let usuario = await Usuario.findOne({email});
 
-        if(usuario){
-            return res.status(400).json({ msg: 'el usuario ya existe'});
+        if(!usuario){
+            return res.status(400).json({msg: 'El usuario no existe'});
         }
 
-        // crear nuevo usuario
-        usuario = new Usuario(req.body);
+        // revisar su password
+        const passCorrecto = await bcryptjs.compare(password,usuario.password);
 
-        // hashear el password
-        const salt = await bcryptjs.genSalt(10);
-        usuario.password = await bcryptjs.hash(password,salt);
+        if(!passCorrecto){
+            return res.status(400).json({msg: 'Usuario o password incorrecto'});
+        }
 
-        // guardar nuevo usuario
-        await usuario.save();
+
+        // Si todo es correcto, vamos a crear el JWT
 
         // Crear y firmar el JWT
         const payload = {
@@ -52,15 +51,20 @@ exports.crearUsuario = async (req, res) => {
             res.json({token: token});
         });
 
-        // Mensaje de confirmación
-        //res.json({ msg: 'Usuario creado correctamente'});
     } catch (error) {
         console.log(error);
-        res.status(400).send('Hubo un error');
     }
 }
 
-// exports.crearUsuario = (req,res) => {
-//     //res.send('hola xd');
-//     console.log(req.body);
-// }
+// Obtiene el usuario que esta authenticado
+exports.usuarioAuthenticado = async (req,res) => {
+    try {
+        //console.log('andale andale');
+        const usuario = await Usuario.findById(req.usuario.id).select('-password');
+        //console.log('arriba arriba');
+        res.json(usuario);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({msg: 'Hubo un error'});
+    }
+}

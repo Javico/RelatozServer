@@ -36,7 +36,7 @@ exports.crearCategoria = async (req, res) => {
 // actualizar categoria por id
 exports.actualizarCategoria = async (req, res) => {
     // extraer la información del proyecto
-    const {titulo, descripcion} = req.body;
+    const {titulo, descripcion, active} = req.body;
     const nuevaCategoria = {};
 
     if(titulo){
@@ -46,6 +46,8 @@ exports.actualizarCategoria = async (req, res) => {
     if(descripcion){
         nuevaCategoria.descripcion = descripcion;
     }
+
+    nuevaCategoria.active = active;
 
     try {
         // Revisar el id a ver si existe
@@ -67,7 +69,18 @@ exports.actualizarCategoria = async (req, res) => {
 // Obtener caegorias
 exports.obtenerCategorias = async (req, res) => {
     try {
-        const categorias = await Categoria.find({},'titulo descripcion').sort({titulo: 1});
+        const categorias = await Categoria.find({ active: true},'titulo descripcion').sort({titulo: 1});
+        res.json({categorias});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Hubo un error');
+    }
+}
+
+// Obtener caegorias todas activa e inactivas para el llenado del grid
+exports.obtenerCategoriasTodas = async (req, res) => {
+    try {
+        const categorias = await Categoria.find({},'titulo descripcion active').sort({titulo: 1});
         res.json({categorias});
     } catch (error) {
         console.log(error);
@@ -87,7 +100,7 @@ exports.eliminarCategoria = async (req,res) =>{
         }
 
         // Eliminar el proyecto
-        await Categoria.findOneAndRemove({ _id: req.params.id});
+        //await Categoria.findOneAndRemove({ _id: req.params.id});
         res.json({msg: 'Categoria eliminada'});
 
     } catch (error) {
@@ -95,6 +108,7 @@ exports.eliminarCategoria = async (req,res) =>{
         res.status(500).send('Hubo un error');
     }
 }
+
 // exports.obtieneCategorias = (req,res) => {
 //     res.send('hola xd desde categoriacontroller');
 //     //console.log(req.body);

@@ -41,7 +41,7 @@ exports.autenticarUsuario = async (req, res) => {
 
         // firmar el JWT
         jwt.sign(payload, process.env.SECRETA, {
-            expiresIn: 3600 // 1 hora son segundos
+            expiresIn: 1800 // 1 hora son segundos
         }, (error, token) => {
             if(error){
                 throw error;

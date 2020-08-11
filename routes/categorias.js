@@ -34,4 +34,10 @@ router.get('/',
     categoriaController.obtenerCategorias
 )
 
+// Obtener categorias TODAS activas o inactivas para el llenado del grid
+router.get('/all',
+    //auth,
+    categoriaController.obtenerCategoriasTodas
+)
+
 module.exports = router;

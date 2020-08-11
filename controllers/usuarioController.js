@@ -60,6 +60,71 @@ exports.crearUsuario = async (req, res) => {
     }
 }
 
+// Actualizar usuario por id
+exports.actualizarUsuario = async (req, res) => {
+    // extraer la información del proyecto
+    const {nombre, email, active} = req.body;
+    const nuevoUsuario = {};
+
+    if(nombre){
+        nuevoUsuario.nombre = nombre;
+    }
+
+    if(email){
+        nuevoUsuario.email = email;
+    }
+
+    nuevoUsuario.active = active;
+
+    try {
+        // Revisar el id a ver si existe
+        let usuario = await Usuario.findById(req.params.id);
+
+        // revisar si existe o no
+        if(!usuario){
+            return res.status(404).json({msg: 'Usuario no encontrado'});
+        }
+
+        usuario = await Usuario.findByIdAndUpdate({ _id: req.params.id},{$set: nuevoUsuario}, { new: true});
+        res.json({usuario});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Hubo un error');
+    }
+}
+
+// Obtener usuarios
+exports.obtenerUsuarios = async (req, res) => {
+    try {
+        const usuarios = await Usuario.find({},'nombre email active').sort({titulo: 1});
+        res.json({usuarios});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Hubo un error');
+    }
+}
+
+// Elimina una usuario por su id
+exports.eliminarUsuario = async (req,res) =>{
+    try {
+        // Revisar el id
+        let usuario = await Usuario.findById(req.params.id);
+
+        // revisar si existe o no
+        if(!usuario){
+            return res.status(404).json({msg: 'Usuario no encontrado'});
+        }
+
+        // Eliminar el proyecto
+        await Usuario.findOneAndRemove({ _id: req.params.id});
+        res.json({msg: 'Usuario eliminada'});
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Hubo un error');
+    }
+}
+
 // exports.crearUsuario = (req,res) => {
 //     //res.send('hola xd');
 //     console.log(req.body);

@@ -48,7 +48,7 @@ exports.obtenerHistoriasTodas = async (req, res) => {
         //const {categoria} = req.body;
         //console.log(req.body);
         //console.log(req.params.id);
-        const historias = await Historia.find({},'titulo descripcion historiaDetalle categoria').sort({creado: -1});
+        const historias = await Historia.find({},'titulo descripcion historiaDetalle categoria active').sort({creado: -1});
         res.json({historias});
     } catch (error) {
         console.log(error);
@@ -63,7 +63,7 @@ exports.obtenerHistorias = async (req, res) => {
         //const {categoria} = req.body;
         //console.log(req.body);
         //console.log(req.params.id);
-        const historias = await Historia.find({ categoria: req.params.id },'titulo descripcion historiaDetalle').sort({creado: -1});
+        const historias = await Historia.find({ categoria: req.params.id, active: true },'titulo descripcion historiaDetalle').sort({creado: -1});
         res.json({historias});
     } catch (error) {
         console.log(error);
@@ -88,7 +88,7 @@ exports.obtenerHistoriaDetalle = async (req, res) => {
 // actualizar historia por id
 exports.actualizarHistoria = async (req, res) => {
     // extraer la información del proyecto
-    const {titulo, descripcion, historiaDetalle} = req.body;
+    const {titulo, descripcion, historiaDetalle, active} = req.body;
     const nuevaHistoria = {};
 
     if(titulo){
@@ -102,6 +102,8 @@ exports.actualizarHistoria = async (req, res) => {
     if(historiaDetalle){
         nuevaHistoria.historiaDetalle = historiaDetalle;
     }
+
+    nuevaHistoria.active = active;
 
     try {
         // Revisar el id a ver si existe
@@ -133,7 +135,7 @@ exports.eliminarHistoria = async (req,res) =>{
         }
 
         // Eliminar el proyecto
-        await Historia.findOneAndRemove({ _id: req.params.id});
+        //await Historia.findOneAndRemove({ _id: req.params.id});
         res.json({msg: 'Historia eliminada'});
 
     } catch (error) {

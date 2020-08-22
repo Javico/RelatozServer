@@ -10,7 +10,7 @@ exports.crearCategoria = async (req, res) => {
 
     try {
         //Extraer categoria
-        const {titulo, descripcion} = req.body;
+        const {titulo, descripcion, url} = req.body;
 
         const nuevaCategoria = {};
 
@@ -20,6 +20,10 @@ exports.crearCategoria = async (req, res) => {
     
         if(descripcion){
             nuevaCategoria.descripcion = descripcion;
+        }
+
+        if(url){
+            nuevaCategoria.urlImage = url;
         }
 
         // Creamos la tarea
@@ -36,7 +40,7 @@ exports.crearCategoria = async (req, res) => {
 // actualizar categoria por id
 exports.actualizarCategoria = async (req, res) => {
     // extraer la información del proyecto
-    const {titulo, descripcion, active} = req.body;
+    const {titulo, descripcion, active, url} = req.body;
     const nuevaCategoria = {};
 
     if(titulo){
@@ -45,6 +49,10 @@ exports.actualizarCategoria = async (req, res) => {
 
     if(descripcion){
         nuevaCategoria.descripcion = descripcion;
+    }
+
+    if(url){
+        nuevaCategoria.urlImage = url;
     }
 
     nuevaCategoria.active = active;
@@ -66,10 +74,10 @@ exports.actualizarCategoria = async (req, res) => {
     }
 }
 
-// Obtener caegorias
+// Obtener categorias
 exports.obtenerCategorias = async (req, res) => {
     try {
-        const categorias = await Categoria.find({ active: true},'titulo descripcion').sort({titulo: 1});
+        const categorias = await Categoria.find({ active: true},'titulo descripcion urlImage').sort({titulo: 1});
         res.json({categorias});
     } catch (error) {
         console.log(error);
@@ -80,7 +88,7 @@ exports.obtenerCategorias = async (req, res) => {
 // Obtener caegorias todas activa e inactivas para el llenado del grid
 exports.obtenerCategoriasTodas = async (req, res) => {
     try {
-        const categorias = await Categoria.find({},'titulo descripcion active').sort({titulo: 1});
+        const categorias = await Categoria.find({},'titulo descripcion active urlImage').sort({titulo: 1});
         res.json({categorias});
     } catch (error) {
         console.log(error);

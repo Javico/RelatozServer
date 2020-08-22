@@ -15,6 +15,10 @@ const CategoriaSchema = mongoose.Schema({
         type: Date,
         default: Date.now()
     },
+    urlImage:{
+        type: String,
+        trim: true
+    },
     active:{
         type: Boolean,
         default: true
